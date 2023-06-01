@@ -95,27 +95,6 @@ int main(int argc, char *argv[]) {
   	}
   	printf("CLIENT: I received this from the server: \"%s\"\n", buffer);
 
-
-    	// Get return message from server
-    	// Clear out the buffer again for reuse
-    	memset(buffer, '\0', sizeof(buffer));
-    	// Read data from the socket, leaving \0 at end
-    	charsRead = recv(socketFD, buffer, sizeof(buffer) - 1, 0); 
-    	if (charsRead < 0){
-    	    error("CLIENT: ERROR reading from socket");
-    	}
-    	printf("CLIENT: I received this from the server: \"%s\"\n", buffer);
-
-  	// Get return message from server
-  	// Clear out the buffer again for reuse
-  	memset(buffer, '\0', sizeof(buffer));
-  	// Read data from the socket, leaving \0 at end
-  	charsRead = recv(socketFD, buffer, sizeof(buffer) - 1, 0); 
-  	if (charsRead < 0){
-  		  error("CLIENT: ERROR reading from socket");
-  	}
-  	printf("CLIENT: I received this from the server: \"%s\"\n", buffer);
-
   	// Close the socket
   	close(socketFD); 
   	return 0;
