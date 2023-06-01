@@ -15,13 +15,14 @@
 
 // Error function used for reporting issues
 void error(const char *msg) { 
-	perror(msg); 
-  	exit(0); 
+  	perror(msg); 
+	  exit(0); 
 } 
 
 // Set up the address struct
 void setupAddressStruct(struct sockaddr_in* address, 
                         int portNumber){
+
  
   	// Clear out the address struct
   	memset((char*) address, '\0', sizeof(*address)); 
@@ -39,7 +40,7 @@ void setupAddressStruct(struct sockaddr_in* address,
   	}
   	// Copy the first IP address from the DNS entry to sin_addr.s_addr
   	memcpy((char*) &address->sin_addr.s_addr, 
- 	      hostInfo->h_addr_list[0],
+  	      hostInfo->h_addr_list[0],
   	      hostInfo->h_length);
 }
 
@@ -52,6 +53,7 @@ int main(int argc, char *argv[]) {
   		  fprintf(stderr,"USAGE: %s hostname port\n", argv[0]); 
   		  exit(0); 
   	} 
+
 
   	// Create a socket
   	socketFD = socket(AF_INET, SOCK_STREAM, 0); 
@@ -95,7 +97,18 @@ int main(int argc, char *argv[]) {
   	}
   	printf("CLIENT: I received this from the server: \"%s\"\n", buffer);
 
-  	// Close the socket
-  	close(socketFD); 
-  	return 0;
+
+    // Get return message from server
+    // Clear out the buffer again for reuse
+    memset(buffer, '\0', sizeof(buffer));
+    // Read data from the socket, leaving \0 at end
+    charsRead = recv(socketFD, buffer, sizeof(buffer) - 1, 0); 
+    if (charsRead < 0){
+        error("CLIENT: ERROR reading from socket");
+    }
+    printf("CLIENT: I received this from the server: \"%s\"\n", buffer);
+
+    // Close the socket
+    close(socketFD); 
+    return 0;
 }
