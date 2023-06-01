@@ -48,8 +48,8 @@ int main(int argc, char *argv[]) {
   	struct sockaddr_in serverAddress;
   	char buffer[256];
   	// Check usage & args
-  	if (argc < 2) { 
-  		  fprintf(stderr,"USAGE: %s hostname port\n", argv[0]); 
+  	if (argc != 4) { 
+  		  fprintf(stderr,"USAGE: %s plaintext key port\n", argv[0]); 
   		  exit(0); 
   	} 
 
@@ -60,12 +60,12 @@ int main(int argc, char *argv[]) {
   	}
 
   	 // Set up the server address struct
-  	setupAddressStruct(&serverAddress, atoi(argv[1]));
+  	setupAddressStruct(&serverAddress, atoi(argv[3]));
 
   	// Connect to server
   	if (connect(socketFD, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) < 0){
-    	error("CLIENT: ERROR connecting");
-  }
+    		error("CLIENT: ERROR connecting");
+  	}
   	// Get input message from user
   	printf("CLIENT: Enter text to send to the server, and then hit enter: ");
   	// Clear out the buffer array
