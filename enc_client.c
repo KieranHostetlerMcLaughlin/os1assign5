@@ -15,40 +15,40 @@
 
 // Error function used for reporting issues
 void error(const char *msg) { 
-  perror(msg); 
-  exit(0); 
+  	perror(msg); 
+	exit(0); 
 } 
 
 // Set up the address struct
 void setupAddressStruct(struct sockaddr_in* address, 
-                        int portNumber, 
-                        char* hostname){
+                        int portNumber/*, 
+                        char* hostname*/){
  
-  // Clear out the address struct
-  memset((char*) address, '\0', sizeof(*address)); 
+  	// Clear out the address struct
+  	memset((char*) address, '\0', sizeof(*address)); 
 
-  // The address should be network capable
-  address->sin_family = AF_INET;
-  // Store the port number
-  address->sin_port = htons(portNumber);
+  	// The address should be network capable
+  	address->sin_family = AF_INET;
+  	// Store the port number
+  	address->sin_port = htons(portNumber);
 
-  // Get the DNS entry for this host name
-  struct hostent* hostInfo = gethostbyname(hostname); 
-  if (hostInfo == NULL) { 
-    fprintf(stderr, "CLIENT: ERROR, no such host\n"); 
-    exit(0); 
-  }
-  // Copy the first IP address from the DNS entry to sin_addr.s_addr
-  memcpy((char*) &address->sin_addr.s_addr, 
-        hostInfo->h_addr_list[0],
-        hostInfo->h_length);
+  	// Get the DNS entry for this host name
+  	struct hostent* hostInfo = gethostbyname("localhost"); 
+  	if (hostInfo == NULL) { 
+  		  fprintf(stderr, "CLIENT: ERROR, no such host\n"); 
+  		  exit(0); 
+  	}
+  	// Copy the first IP address from the DNS entry to sin_addr.s_addr
+  	memcpy((char*) &address->sin_addr.s_addr, 
+  	      hostInfo->h_addr_list[0],
+  	      hostInfo->h_length);
 }
 
 int main(int argc, char *argv[]) {
-  int socketFD, portNumber, charsWritten, charsRead;
-  struct sockaddr_in serverAddress;
-  char buffer[256];
-  // Check usage & args
+  	int socketFD, portNumber, charsWritten, charsRead;
+  	struct sockaddr_in serverAddress;
+  	char buffer[256];
+	// Check usage & args
   if (argc < 3) { 
     fprintf(stderr,"USAGE: %s hostname port\n", argv[0]); 
     exit(0); 
