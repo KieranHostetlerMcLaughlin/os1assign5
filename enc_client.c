@@ -114,18 +114,24 @@ int main(int argc, char *argv[]) {
   	if (charsWritten < 0){
   		  error("CLIENT: ERROR writing to socket");
   	}
-  	if (charsWritten < plaintextCount){
+  	else if (charsWritten < plaintextCount){
     		printf("CLIENT: WARNING: Not all data written to socket!\n");
   	}
+	else {
+		printf("CLIENT: file sent with no errors or warnings.\n");
+	}
 
 	//now do the same thing except with the key
 	charsWritten = send(socketFD, key, keylen, 0);
         if (charsWritten < 0){
                   error("CLIENT: ERROR writing to socket");
         }
-        if (charsWritten < plaintextCount){
+        else if (charsWritten < plaintextCount){
                 printf("CLIENT: WARNING: Not all data written to socket!\n");
         }
+	else {
+                printf("CLIENT: file sent with no errors or warnings.\n");
+        }	
 
 
   	// Get return message from server
