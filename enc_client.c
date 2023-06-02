@@ -76,8 +76,8 @@ int main(int argc, char *argv[]) {
 	//store file names in varaibles
 	char plaintext[strlen(argv[1])];
 	strcpy(plaintext, argv[1]);
-	/*char key[strlen(argv[2])];
-	strcpy(key, argv[2]); */
+	char key[strlen(argv[2])];
+	strcpy(key, argv[2]); 
 
   	// Create a socket
   	socketFD = socket(AF_INET, SOCK_STREAM, 0); 
@@ -92,20 +92,21 @@ int main(int argc, char *argv[]) {
   	if (connect(socketFD, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) < 0){
     		error("CLIENT: ERROR connecting");
   	}
-  	// Get input message from user
-  	//printf("CLIENT: Enter text to send to the server, and then hit enter: ");
-  	// Clear out the buffer array
-  	//memset(buffer, '\0', sizeof(buffer));
-  	// Get input from the user, trunc to buffer - 1 chars, leaving \0
-  	/*fgets(buffer, sizeof(buffer) - 1, stdin);
-  	// Remove the trailing \n that fgets adds
-  	buffer[strcspn(buffer, "\n")] = '\0';*/
-
+  	
+	//get the amount of characters in the plaintext file
 	int plaintextCount = count_characters(plaintext);
 	if (plaintextCount == -1) {
 		exit(1);
 	}
-	//int keylen = count_characters(key);
+	//get the amount of characters in the key file
+	int keylen = count_characters(key);
+	if (keylen == -1) {
+		exit(1);
+	}
+	//make sure the key isn't shorter than the plaintext
+	if (keylen < plaintextCount) {
+		error("CLIENT: ERROR: key is shorter than plaintext\n");
+	}
 	
   	// Send message to server
   	// Write to the server
@@ -116,6 +117,16 @@ int main(int argc, char *argv[]) {
   	if (charsWritten < plaintextCount){
     		printf("CLIENT: WARNING: Not all data written to socket!\n");
   	}
+
+	//now do the same thing except with the key
+	charsWritten = send(socketFD, key, keylen, 0);
+        if (charsWritten < 0){
+                  error("CLIENT: ERROR writing to socket");
+        }
+        if (charsWritten < plaintextCount){
+                printf("CLIENT: WARNING: Not all data written to socket!\n");
+        }
+
 
   	// Get return message from server
   	// Clear out the buffer again for reuse
