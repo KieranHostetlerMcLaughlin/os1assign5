@@ -44,10 +44,12 @@ void setupAddressStruct(struct sockaddr_in* address,
 }
 
 //count the characters in a file
+//had ChatGPT make a program for me and then copied it into here
 int count_characters(const char *file_path) {
     FILE *file = fopen(file_path, "r");
     if (file == NULL) {
         printf("File not found.\n");
+	printf("%s\n", file_path);
         return -1;
     }
 
@@ -64,7 +66,7 @@ int count_characters(const char *file_path) {
 int main(int argc, char *argv[]) {
   	int socketFD, portNumber, charsWritten, charsRead;
   	struct sockaddr_in serverAddress;
-  	char buffer[256];
+  	//char buffer[256];
   	// Check usage & args
   	if (argc != 4) { 
   		  fprintf(stderr,"USAGE: %s plaintext key port\n", argv[0]); 
@@ -74,8 +76,8 @@ int main(int argc, char *argv[]) {
 	//store file names in varaibles
 	char plaintext[strlen(argv[1])];
 	strcpy(plaintext, argv[1]);
-	char key[strlen(argv[2])];
-	strcpy(key, argv[2]); 
+	/*char key[strlen(argv[2])];
+	strcpy(key, argv[2]); */
 
   	// Create a socket
   	socketFD = socket(AF_INET, SOCK_STREAM, 0); 
@@ -91,32 +93,38 @@ int main(int argc, char *argv[]) {
     		error("CLIENT: ERROR connecting");
   	}
   	// Get input message from user
-  	printf("CLIENT: Enter text to send to the server, and then hit enter: ");
+  	//printf("CLIENT: Enter text to send to the server, and then hit enter: ");
   	// Clear out the buffer array
-  	memset(buffer, '\0', sizeof(buffer));
+  	//memset(buffer, '\0', sizeof(buffer));
   	// Get input from the user, trunc to buffer - 1 chars, leaving \0
   	/*fgets(buffer, sizeof(buffer) - 1, stdin);
   	// Remove the trailing \n that fgets adds
   	buffer[strcspn(buffer, "\n")] = '\0';*/
+
+	int plaintextCount = count_characters(plaintext);
+	if (plaintextCount == -1) {
+		exit(1);
+	}
+	//int keylen = count_characters(key);
 	
   	// Send message to server
   	// Write to the server
-  	charsWritten = send(socketFD, buffer, strlen(buffer), 0); 
+  	charsWritten = send(socketFD, plaintext, plaintextCount, 0); 
   	if (charsWritten < 0){
   		  error("CLIENT: ERROR writing to socket");
   	}
-  	if (charsWritten < strlen(buffer)){
+  	if (charsWritten < plaintextCount){
     		printf("CLIENT: WARNING: Not all data written to socket!\n");
   	}
 
   	// Get return message from server
   	// Clear out the buffer again for reuse
-  	memset(buffer, '\0', sizeof(buffer));
+  	/*memset(buffer, '\0', sizeof(buffer));
   	// Read data from the socket, leaving \0 at end
   	charsRead = recv(socketFD, buffer, sizeof(buffer) - 1, 0); 
   	if (charsRead < 0){
     		error("CLIENT: ERROR reading from socket");
-  	}
+  	}*/
   	//printf("CLIENT: I received this from the server: \"%s\"\n", buffer);
 
   	// Close the socket
