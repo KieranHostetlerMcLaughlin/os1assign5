@@ -43,6 +43,24 @@ void setupAddressStruct(struct sockaddr_in* address,
   	      hostInfo->h_length);
 }
 
+//count the characters in a file
+int count_characters(const char *file_path) {
+    FILE *file = fopen(file_path, "r");
+    if (file == NULL) {
+        printf("File not found.\n");
+        return -1;
+    }
+
+    int character_count = 0;
+    int ch;
+    while ((ch = fgetc(file)) != EOF) {
+        character_count++;
+    }
+
+    fclose(file);
+    return character_count;
+}
+
 int main(int argc, char *argv[]) {
   	int socketFD, portNumber, charsWritten, charsRead;
   	struct sockaddr_in serverAddress;
@@ -51,7 +69,13 @@ int main(int argc, char *argv[]) {
   	if (argc != 4) { 
   		  fprintf(stderr,"USAGE: %s plaintext key port\n", argv[0]); 
   		  exit(0); 
-  	} 
+  	}
+
+	//store file names in varaibles
+	char plaintext[strlen(argv[1])];
+	strcpy(plaintext, argv[1]);
+	char key[strlen(argv[2])];
+	strcpy(key, argv[2]); 
 
   	// Create a socket
   	socketFD = socket(AF_INET, SOCK_STREAM, 0); 
@@ -71,9 +95,9 @@ int main(int argc, char *argv[]) {
   	// Clear out the buffer array
   	memset(buffer, '\0', sizeof(buffer));
   	// Get input from the user, trunc to buffer - 1 chars, leaving \0
-  	fgets(buffer, sizeof(buffer) - 1, stdin);
+  	/*fgets(buffer, sizeof(buffer) - 1, stdin);
   	// Remove the trailing \n that fgets adds
-  	buffer[strcspn(buffer, "\n")] = '\0'; 
+  	buffer[strcspn(buffer, "\n")] = '\0';*/
 	
   	// Send message to server
   	// Write to the server
@@ -93,7 +117,7 @@ int main(int argc, char *argv[]) {
   	if (charsRead < 0){
     		error("CLIENT: ERROR reading from socket");
   	}
-  	printf("CLIENT: I received this from the server: \"%s\"\n", buffer);
+  	//printf("CLIENT: I received this from the server: \"%s\"\n", buffer);
 
   	// Close the socket
   	close(socketFD); 

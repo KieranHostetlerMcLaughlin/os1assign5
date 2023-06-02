@@ -75,7 +75,7 @@ int main(int argc, char *argv[]){
     		// Get the message from the client and display it
     		memset(buffer, '\0', 256);
     		// Read the client's message from the socket
-    		charsRead = recv(connectionSocket, buffer, 255, 0); 
+    		/*charsRead = recv(connectionSocket, buffer, 255, 0); 
     		if (charsRead < 0){
       			error("ERROR reading from socket");
     		}
@@ -86,7 +86,7 @@ int main(int argc, char *argv[]){
                     "I am the server, and I got your message", 39, 0); 
     		if (charsRead < 0){
       			error("ERROR writing to socket");
-    		}
+    		}*/
     		// Close the connection socket for this client
     		close(connectionSocket); 
   	}
