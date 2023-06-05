@@ -118,7 +118,7 @@ int main(int argc, char *argv[]) {
     		printf("CLIENT: WARNING: Not all data written to socket!\n");
   	}
 	else {
-		printf("CLIENT: file sent with no errors or warnings.\n");
+		printf("CLIENT: file %s sent with no errors or warnings.\n", argv[1]);
 	}
 
 	//now do the same thing except with the key
@@ -130,7 +130,7 @@ int main(int argc, char *argv[]) {
                 printf("CLIENT: WARNING: Not all data written to socket!\n");
         }
 	else {
-                printf("CLIENT: file sent with no errors or warnings.\n");
+                printf("CLIENT: file %s sent with no errors or warnings.\n", argv[2]);
         }	
 
 

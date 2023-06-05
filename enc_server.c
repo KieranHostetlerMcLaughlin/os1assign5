@@ -30,6 +30,10 @@ void setupAddressStruct(struct sockaddr_in* address,
 int main(int argc, char *argv[]){
   	int connectionSocket, charsRead;
   	char buffer[256];
+	char* message; //the message that's being encrypted
+	char* msgLine; //the line of each message
+	size_t msglSize; //buffer size to be used in getline
+	char* key; //the key that's being used to encrypt
   	struct sockaddr_in serverAddress, clientAddress;
   	socklen_t sizeOfClientInfo = sizeof(clientAddress);
 
@@ -72,21 +76,35 @@ int main(int argc, char *argv[]){
                           ntohs(clientAddress.sin_addr.s_addr),
                           ntohs(clientAddress.sin_port));
 
+		int i = 0;
+		for (i; i < 2; i++) {
     		// Get the message from the client and display it
-    		memset(buffer, '\0', 256);
-    		// Read the client's message from the socket
-    		/*charsRead = recv(connectionSocket, buffer, 255, 0); 
-    		if (charsRead < 0){
-      			error("ERROR reading from socket");
-    		}
-    		printf("SERVER: I received this from the client: \"%s\"\n", buffer);
+    			memset(buffer, '\0', 256);
+    			// Read the client's message from the socket
+    			charsRead = recv(connectionSocket, buffer, 255, 0); 
+    			if (charsRead < 0){
+      				error("ERROR reading from socket");
+    			}
+    			//printf("SERVER: I received this from the client: \"%s\"\n", buffer);
+    			//will need to write some code to read the files and store them
+    			fopen(buffer, "r"); //open the file
+			if (file == NULL) {
+				error("ERROR unable to open file\n");		
+			}
+			//read all the text into a given location
+			else {
+				while (getline(&msgLine, &msglSize, file) != -1) {
+					//do something
+				} 
+			}	
+		}		
 
     		// Send a Success message back to the client
     		charsRead = send(connectionSocket, 
                     "I am the server, and I got your message", 39, 0); 
     		if (charsRead < 0){
       			error("ERROR writing to socket");
-    		}*/
+    		}
     		// Close the connection socket for this client
     		close(connectionSocket); 
   	}
