@@ -64,7 +64,7 @@ int count_characters(const char *file_path) {
 }
 
 int main(int argc, char *argv[]) {
-  	int socketFD, portNumber, charsWritten, charsRead;
+  	int socketFD, portNumber, charsWrittenPlaintext, charsWrittenKey, charsRead;
   	struct sockaddr_in serverAddress;
   	//char buffer[256];
   	// Check usage & args
@@ -110,11 +110,11 @@ int main(int argc, char *argv[]) {
 	
   	// Send message to server
   	// Write to the server
-  	charsWritten = send(socketFD, plaintext, plaintextCount, 0); 
-  	if (charsWritten < 0){
+  	charsWrittenPlaintext = send(socketFD, plaintext, plaintextCount, 0); 
+  	if (charsWrittenPlaintext < 0){
   		  error("CLIENT: ERROR writing to socket");
   	}
-  	else if (charsWritten < plaintextCount){
+  	else if (charsWrittenPlaintext < plaintextCount){
     		printf("CLIENT: WARNING: Not all data written to socket!\n");
   	}
 	else {
@@ -122,11 +122,11 @@ int main(int argc, char *argv[]) {
 	}
 
 	//now do the same thing except with the key
-	charsWritten = send(socketFD, key, keylen, 0);
-        if (charsWritten < 0){
+	charsWrittenKey = send(socketFD, key, keylen, 0);
+        if (charsWrittenKey < 0){
                   error("CLIENT: ERROR writing to socket");
         }
-        else if (charsWritten < plaintextCount){
+        else if (charsWrittenKey < plaintextCount){
                 printf("CLIENT: WARNING: Not all data written to socket!\n");
         }
 	else {
