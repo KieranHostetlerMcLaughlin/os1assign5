@@ -6,6 +6,8 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
+const int BUFFERLEN = 256;
+
 // Error function used for reporting issues
 void error(const char *msg) {
   	perror(msg);
@@ -29,11 +31,11 @@ void setupAddressStruct(struct sockaddr_in* address,
 
 int main(int argc, char *argv[]){
   	int connectionSocket, charsRead;
-  	char buffer[256];
-	char* line; //the buffer to hold each line in a file
+  	char buffer[BUFFERLEN];
+	/*char* line; //the buffer to hold each line in a file
 	size_t lineSize = 0; //the buffer that represents the size of the line
 	char* message; //the message that's being encrypted
-	char* key; //the key that's being used to encrypt
+	char* key; //the key that's being used to encrypt*/
   	struct sockaddr_in serverAddress, clientAddress;
   	socklen_t sizeOfClientInfo = sizeof(clientAddress);
 
@@ -74,7 +76,7 @@ int main(int argc, char *argv[]){
     		printf("SERVER: Connected to client running at host %d port %d\n", 
                           ntohs(clientAddress.sin_addr.s_addr),
                           ntohs(clientAddress.sin_port));
-		int i = 0;
+		/*int i = 0;
 		for (i; i < 2; i++) {
     			// Get the message from the client and display it
     			memset(buffer, '\0', 256);
@@ -83,7 +85,7 @@ int main(int argc, char *argv[]){
     			if (charsRead < 0){
       				error("ERROR reading from socket");
     			}
-    			printf("SERVER: I received this from the client: \"%s\"\n", buffer);
+    			printf("SERVER: I received this from the client: \"%s\"\n", buffer);*/
     			//will need to write some code to read the files and store them
     			/*FILE* file = fopen(buffer, "r"); //open the file
 			if (file == NULL) {
@@ -108,15 +110,33 @@ int main(int argc, char *argv[]){
 				/*lineSize = 0; 
 			}
 			fclose(file);*/	
-		}		
+		//}		
     		// Send a Success message back to the client
-    		charsRead = send(connectionSocket, 
+    		/*charsRead = send(connectionSocket, 
                     "I am the server, and I got your message", 39, 0); 
     		if (charsRead < 0){
       			error("ERROR writing to socket");
-    		}
+    		}*/
+		int childpid = fork();
+		switch (childpid) {
+			case -1: //error
+				break;
+			case 0: //child
+				//encryption, send/recieve
+				memset(buffer, '\0', BUFFERLEN);
+				charsRead = recv(connectionSocket, buffer, BUFFERLEN - 1, 0);
+				if (charsRead < 0) {
+					error("ERROR reading from socket");
+				}	
+				printf("SERVER: I received this from the client: \"%s\"\n", buffer);
+				break;
+			default: //parent
+				waitpid(childpid);
+				close(connectionSocket);
+				break;
+		}
     		// Close the connection socket for this client
-    		close(connectionSocket); 
+    		//close(connectionSocket); 
   	}
   	// Close the listening socket
   	close(listenSocket); 

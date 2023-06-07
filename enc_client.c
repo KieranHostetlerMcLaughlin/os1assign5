@@ -45,11 +45,11 @@ void setupAddressStruct(struct sockaddr_in* address,
 
 //count the characters in a file
 //had ChatGPT make a program for me and then copied it into here
-int count_characters(const char *file_path) {
-    FILE *file = fopen(file_path, "r");
+int count_characters(FILE* file) {
+    //FILE *file = fopen(file_path, "r");
     if (file == NULL) {
         printf("File not found.\n");
-	printf("%s\n", file_path);
+	//printf("%s\n", file_path);
         return -1;
     }
 
@@ -59,13 +59,14 @@ int count_characters(const char *file_path) {
         character_count++;
     }
 
-    fclose(file);
+    //fclose(file);
     return character_count;
 }
 
 int main(int argc, char *argv[]) {
   	int socketFD, portNumber, charsWrittenPlaintext, charsWrittenKey, charsRead;
   	struct sockaddr_in serverAddress;
+	size_t buffer = 0;
   	//char buffer[256];
   	// Check usage & args
   	if (argc != 4) { 
@@ -73,11 +74,27 @@ int main(int argc, char *argv[]) {
   		  exit(0); 
   	}
 
-	//store file names in varaibles
-	char plaintext[strlen(argv[1])];
-	strcpy(plaintext, argv[1]);
-	char key[strlen(argv[2])];
-	strcpy(key, argv[2]); 
+	//store information about plaintext file
+	char plaintextFileName[strlen(argv[1])];
+	strcpy(plaintextFileName, argv[1]);
+	FILE* plainFile = fopen(plaintextFileName, "r");
+
+	//get the text in plaintext
+	char* plaintext;
+	if (getline(&plaintext, &buffer, plainFile) == -1) {
+		error("CLIENT: ERROR getting text from file\n");
+	}
+
+	//store information about key file
+	char keyFileName[strlen(argv[2])];
+	strcpy(keyFileName, argv[2]); 
+	FILE* keyFile = fopen(keyFileName, "r");
+
+	char* key;
+	buffer = 0;
+        if (getline(&key, &buffer, keyFile) == -1) {
+                error("CLIENT: ERROR getting text from file\n");
+        }
 
   	// Create a socket
   	socketFD = socket(AF_INET, SOCK_STREAM, 0); 
@@ -94,12 +111,12 @@ int main(int argc, char *argv[]) {
   	}
   	
 	//get the amount of characters in the plaintext file
-	int plaintextCount = count_characters(plaintext);
+	int plaintextCount = count_characters(plainFile);
 	if (plaintextCount == -1) {
 		exit(1);
 	}
 	//get the amount of characters in the key file
-	int keylen = count_characters(key);
+	int keylen = count_characters(keyFile);
 	if (keylen == -1) {
 		exit(1);
 	}
@@ -118,7 +135,7 @@ int main(int argc, char *argv[]) {
     		printf("CLIENT: WARNING: Not all data written to socket!\n");
   	}
 	else {
-		printf("CLIENT: file %s sent with no errors or warnings.\n", argv[1]);
+		printf("%s\n", plaintext);
 	}
 
 	//now do the same thing except with the key
@@ -130,7 +147,7 @@ int main(int argc, char *argv[]) {
                 printf("CLIENT: WARNING: Not all data written to socket!\n");
         }
 	else {
-                printf("CLIENT: file %s sent with no errors or warnings.\n", argv[2]);
+                printf("CLIENT: file %s sent with no errors or warnings.\n", keyFileName);
         }	
 
 
